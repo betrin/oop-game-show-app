@@ -2,7 +2,7 @@
  * Project 4 - OOP Game App
  * app.js */
 
-const allowedKeys = document.getElementById('qwerty');
+const allowedKeys = document.querySelectorAll('.key');
 const btnReset = document.getElementById('btn__reset');
 const phraseContainer = document.getElementById('phrase');
 const phraseList = phraseContainer.querySelector('ul');
@@ -19,18 +19,23 @@ btnReset.addEventListener('click', function (e) {
 }) 
 
 //On screen Button click event
-allowedKeys.addEventListener('click', function (e) {
-  game.handleInteraction(e);
+Array.from(allowedKeys).forEach(key => {
+  key.addEventListener('click', function (e) {
+    const keyVal = key.textContent;
+    game.handleInteraction(keyVal);
+  })
 })
+
 
 // Bind keyboard key press to call on screen button click event
 document.addEventListener('keydown', (e) => {
   if (/[a-zA-Z]/.test(e.key)) {
     const letter = e.key.toLowerCase();
-    const buttonPressed = Array.from(allowedKeys.querySelectorAll('.key')).find((button) => button.innerHTML === letter);
-    if (buttonPressed) {
-      buttonPressed.click();
+    const buttonExists = Array.from(allowedKeys).find((button) => button.innerHTML === letter);
+    if (buttonExists){
+      game.handleInteraction(letter);
     }
+   
   }
 });
 

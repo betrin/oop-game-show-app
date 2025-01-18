@@ -30,17 +30,8 @@ class Phrase {
   * Checks if passed letter is in phrase
   * @param (string) letter - Letter to check
   */
-  checkLetter(e) {
-  
-    const currentLetter = e.target.innerHTML;
-    if (game.activePhrase.phrase.includes(currentLetter)){
-      this.showMatchedLetter(currentLetter);
-      e.target.classList.add('chosen');
-      game.checkForWin();
-    } else {
-      e.target.classList.add('wrong');
-      game.removeLife();
-    }
+  checkLetter(letter) {
+    return game.activePhrase.phrase.includes(letter);
   }
 
   /**

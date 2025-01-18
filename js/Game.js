@@ -6,11 +6,11 @@ class Game {
   constructor () {
     this.missed = 0;
     this.phrases = [
-      'Break the ice', 
-      'Beat around the bush',
-      'A piece of cake',
-      'Bury the hatchet',
-      'Bite the bullet', 
+      new Phrase('Beat around the bush'), 
+      new Phrase('A piece of cake'), 
+      new Phrase('The harder I work the luckier I get'),
+      new Phrase('Curiosity killed the cat'),
+      new Phrase('Bite the bullet') 
     ];
     this.activePhrase = null;
   }
@@ -21,15 +21,14 @@ class Game {
   */
   getRandomPhrase() {
     const randomIndex = Math.floor(Math.random()* this.phrases.length)
-    return new Phrase(this.phrases[randomIndex]);
+    return this.phrases[randomIndex];
   }
 
   /**
   * Begins game by selecting a random phrase and displaying it to user
   */
   startGame() {
-    const randomPhrase = game.getRandomPhrase();
-    const phrase = new Phrase(randomPhrase.phrase);
+    const phrase = game.getRandomPhrase();
     phrase.addPhraseToDisplay();
     this.activePhrase = phrase;
     startScreen.style.display = "none";
@@ -37,13 +36,19 @@ class Game {
 
   /* parent Interaction method which will distribute func and date around other classes
   */
-  handleInteraction (e) {
-    const isButton = e.target.nodeName === 'BUTTON';
-    if (isButton && !e.target.classList.contains('wrong') && !e.target.classList.contains('chosen')) {
-      this.activePhrase.checkLetter(e);
+  handleInteraction (letter) {
+    // let pressedKey = e.target.innerHTML;
+      const buttonPressed = Array.from(allowedKeys).find((button) => button.innerHTML === letter);
+      buttonPressed.classList.add('chosen');
+    if (this.activePhrase.checkLetter(letter)){
+      this.activePhrase.showMatchedLetter(letter);
+      if (game.checkForWin()) {
+        this.gameOver();
+      }
     } else {
-      // Nothing
-    } 
+      buttonPressed.classList.add('wrong');
+      game.removeLife();
+    }
   }
 
   /**
@@ -57,7 +62,7 @@ class Game {
       // Not win
       return false;
     } else {
-      this.gameOver();
+      return true;
     }
   };
 
@@ -94,10 +99,11 @@ class Game {
     
     // RESET the keys
     phraseList.innerHTML = '';
-    let pressedKeys = allowedKeys.querySelectorAll('.chosen, .wrong');
-    pressedKeys.forEach(key => {
-      key.classList.remove('chosen');
-      key.classList.remove('wrong');
+    allowedKeys.forEach(key => {
+      if (key.classList.contains('chosen')) {
+        key.classList.remove('chosen');
+        key.classList.remove('wrong');
+      }
     })
     
     // RESET the lives
